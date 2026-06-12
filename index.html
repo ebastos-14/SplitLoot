@@ -58,6 +58,7 @@ select{
     border-radius:8px;
     background:#2a2e38;
     color:white;
+    font-size:16px;
 }
 
 .radio-group{
@@ -86,7 +87,7 @@ select{
 }
 
 .result-value{
-    font-size:28px;
+    font-size:32px;
     font-weight:bold;
     margin-top:5px;
 }
@@ -103,11 +104,17 @@ button{
     padding:12px 16px;
     cursor:pointer;
     font-weight:bold;
+    transition:0.2s;
+}
+
+button:hover{
+    opacity:.9;
 }
 
 .copy-btn{
     background:#f0b90b;
     color:black;
+    flex:1;
 }
 
 .clear-btn{
@@ -115,6 +122,17 @@ button{
     color:white;
     width:100%;
     margin-top:15px;
+}
+
+.info{
+    background:#252a34;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.info span{
+    font-weight:bold;
 }
 
 .success{
@@ -141,16 +159,17 @@ button{
     <h1>💰 Calculadora Split Albion</h1>
 
     <div class="card">
+
         <h2>Loot</h2>
 
         <div class="field">
             <label>Loot Total</label>
-            <input type="number" id="lootTotal" min="0">
+            <input type="text" id="lootTotal" inputmode="numeric">
         </div>
 
         <div class="field">
             <label>Plata Líquida</label>
-            <input type="number" id="silver" min="0">
+            <input type="text" id="silver" inputmode="numeric">
         </div>
 
         <div class="field">
@@ -167,50 +186,81 @@ button{
                     15%
                 </label>
             </div>
+
         </div>
+
     </div>
 
     <div class="card">
+
         <h2>Mapa</h2>
 
         <div class="field">
+
             <select id="mapType">
                 <option value="0">No cobrar mapa</option>
                 <option value="10000000">10M</option>
                 <option value="18000000">18M</option>
                 <option value="custom">Custom</option>
             </select>
+
         </div>
 
         <div class="field hidden" id="customMapContainer">
+
             <label>Valor Custom</label>
-            <input type="number" id="customMap" min="0">
+            <input type="text" id="customMap" inputmode="numeric">
+
         </div>
+
     </div>
 
     <div class="card">
+
         <h2>Grupo</h2>
 
         <div class="field">
+
             <label>Participantes</label>
 
             <select id="participants">
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-                <option selected>11</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11" selected>11</option>
             </select>
+
         </div>
 
         <div class="field">
+
             <label>Jugadores al 50%</label>
 
             <select id="halfPlayers"></select>
+
         </div>
+
     </div>
 
     <div class="card">
+
+        <h2>Resumen</h2>
+
+        <div class="info">
+            Total a repartir:
+            <span id="totalPool">0</span>
+        </div>
+
+        <div class="info">
+            Participaciones:
+            <span id="shares">0</span>
+        </div>
+
+    </div>
+
+    <div class="card">
+
         <h2>Resultados</h2>
 
         <div id="errorBox" class="error hidden"></div>
@@ -222,7 +272,7 @@ button{
 
         <div class="buttons">
             <button class="copy-btn" id="copy100">
-                Copiar 100%
+                📋 Copiar 100%
             </button>
         </div>
 
@@ -235,15 +285,16 @@ button{
 
         <div class="buttons">
             <button class="copy-btn" id="copy50">
-                Copiar 50%
+                📋 Copiar 50%
             </button>
         </div>
 
         <div id="message" class="success"></div>
 
         <button class="clear-btn" id="clearBtn">
-            Limpiar Todo
+            🗑️ Limpiar Todo
         </button>
+
     </div>
 
 </div>
@@ -254,6 +305,7 @@ const STORAGE_KEY = "albionSplitCalculator";
 
 const lootTotal = document.getElementById("lootTotal");
 const silver = document.getElementById("silver");
+
 const mapType = document.getElementById("mapType");
 const customMap = document.getElementById("customMap");
 const customMapContainer = document.getElementById("customMapContainer");
@@ -261,99 +313,187 @@ const customMapContainer = document.getElementById("customMapContainer");
 const participants = document.getElementById("participants");
 const halfPlayers = document.getElementById("halfPlayers");
 
+const totalPoolElement = document.getElementById("totalPool");
+const sharesElement = document.getElementById("shares");
+
 const fullValue = document.getElementById("fullValue");
 const halfValue = document.getElementById("halfValue");
 
 const errorBox = document.getElementById("errorBox");
 const message = document.getElementById("message");
 
-function formatNumber(num){
-    return Math.round(num).toLocaleString("es-CO");
+function formatInputValue(value){
+
+    const numbers = String(value).replace(/\D/g,'');
+
+    if(!numbers) return '';
+
+    return Number(numbers).toLocaleString('en-US');
+
+}
+
+function getNumericValue(value){
+
+    return Number(
+        String(value).replace(/,/g,'')
+    ) || 0;
+
+}
+
+function formatResult(value){
+
+    return Math.round(value)
+        .toLocaleString('en-US');
+
 }
 
 function saveData(){
 
     const data = {
-        lootTotal: lootTotal.value,
-        silver: silver.value,
+
+        lootTotal: getNumericValue(lootTotal.value),
+        silver: getNumericValue(silver.value),
+
         mapType: mapType.value,
-        customMap: customMap.value,
+
+        customMap: getNumericValue(customMap.value),
+
         participants: participants.value,
         halfPlayers: halfPlayers.value,
-        tax: document.querySelector('input[name="tax"]:checked').value
+
+        tax: document.querySelector(
+            'input[name="tax"]:checked'
+        ).value
+
     };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+
 }
 
 function loadData(){
 
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const data = JSON.parse(
+        localStorage.getItem(STORAGE_KEY)
+    );
 
     if(!data) return;
 
-    lootTotal.value = data.lootTotal || "";
-    silver.value = data.silver || "";
-    mapType.value = data.mapType || "0";
-    customMap.value = data.customMap || "";
-    participants.value = data.participants || "11";
+    lootTotal.value = data.lootTotal
+        ? formatInputValue(data.lootTotal)
+        : '';
 
-    document.querySelector(
-        `input[name="tax"][value="${data.tax || 15}"]`
-    ).checked = true;
+    silver.value = data.silver
+        ? formatInputValue(data.silver)
+        : '';
+
+    customMap.value = data.customMap
+        ? formatInputValue(data.customMap)
+        : '';
+
+    mapType.value = data.mapType || '0';
+
+    participants.value = data.participants || '11';
 
     updateHalfPlayers();
 
-    halfPlayers.value = data.halfPlayers || "0";
+    halfPlayers.value = data.halfPlayers || '0';
+
+    const taxRadio = document.querySelector(
+        `input[name="tax"][value="${data.tax || '15'}"]`
+    );
+
+    if(taxRadio){
+        taxRadio.checked = true;
+    }
 
     toggleCustom();
+
 }
 
 function updateHalfPlayers(){
 
-    const total = Number(participants.value);
+    const total = Number(
+        participants.value
+    );
 
-    halfPlayers.innerHTML = "";
+    const current = halfPlayers.value;
 
-    for(let i=0;i<=total-1;i++){
+    halfPlayers.innerHTML = '';
 
-        const option = document.createElement("option");
+    for(let i = 0; i <= total - 1; i++){
+
+        const option =
+            document.createElement('option');
+
         option.value = i;
         option.textContent = i;
 
         halfPlayers.appendChild(option);
+
     }
+
+    if(current <= total - 1){
+        halfPlayers.value = current;
+    }
+
 }
 
 function toggleCustom(){
 
     customMapContainer.classList.toggle(
-        "hidden",
-        mapType.value !== "custom"
+        'hidden',
+        mapType.value !== 'custom'
     );
+
 }
 
 function calculate(){
 
-    const loot = Number(lootTotal.value || 0);
-    const liquid = Number(silver.value || 0);
+    const loot =
+        getNumericValue(
+            lootTotal.value
+        );
+
+    const liquid =
+        getNumericValue(
+            silver.value
+        );
 
     const tax = Number(
-        document.querySelector('input[name="tax"]:checked').value
+        document.querySelector(
+            'input[name="tax"]:checked'
+        ).value
     );
 
     let mapCost = 0;
 
-    if(mapType.value === "custom"){
-        mapCost = Number(customMap.value || 0);
-    }else{
-        mapCost = Number(mapType.value);
+    if(mapType.value === 'custom'){
+
+        mapCost =
+            getNumericValue(
+                customMap.value
+            );
+
+    }
+    else{
+
+        mapCost =
+            Number(mapType.value);
+
     }
 
-    const totalPlayers = Number(participants.value);
-    const halfCount = Number(halfPlayers.value);
+    const totalPlayers =
+        Number(participants.value);
 
-    const lootNet = loot * ((100 - tax) / 100);
+    const halfCount =
+        Number(halfPlayers.value);
+
+    const lootNet =
+        loot * ((100 - tax) / 100);
 
     const totalPool =
         lootNet +
@@ -362,121 +502,201 @@ function calculate(){
 
     if(totalPool < 0){
 
-        errorBox.classList.remove("hidden");
-        errorBox.textContent =
-            "El total a repartir es negativo.";
+        errorBox.classList.remove('hidden');
 
-        fullValue.textContent = "0";
-        halfValue.textContent = "0";
+        errorBox.textContent =
+            'El total a repartir es negativo.';
+
+        fullValue.textContent = '0';
+        halfValue.textContent = '0';
+
+        totalPoolElement.textContent = '0';
 
         return;
+
     }
 
-    errorBox.classList.add("hidden");
+    errorBox.classList.add('hidden');
 
     const shares =
         (totalPlayers - halfCount) +
         (halfCount * 0.5);
 
-    const pay100 = totalPool / shares;
-    const pay50 = pay100 / 2;
+    const pay100 =
+        totalPool / shares;
 
-    fullValue.textContent = formatNumber(pay100);
-    halfValue.textContent = formatNumber(pay50);
+    const pay50 =
+        pay100 / 2;
 
-    fullValue.dataset.raw = Math.round(pay100);
-    halfValue.dataset.raw = Math.round(pay50);
+    totalPoolElement.textContent =
+        formatResult(totalPool);
+
+    sharesElement.textContent =
+        shares;
+
+    fullValue.textContent =
+        formatResult(pay100);
+
+    halfValue.textContent =
+        formatResult(pay50);
+
+    fullValue.dataset.raw =
+        Math.round(pay100);
+
+    halfValue.dataset.raw =
+        Math.round(pay50);
 
     saveData();
+
 }
 
 function copyValue(value){
 
     navigator.clipboard.writeText(
         String(value)
-            .replace(/\./g,'')
             .replace(/,/g,'')
+            .replace(/\./g,'')
     );
 
-    message.textContent = "✅ Copiado";
+    message.textContent =
+        '✅ Copiado al portapapeles';
 
-    setTimeout(()=>{
-        message.textContent = "";
-    },1500);
+    setTimeout(() => {
+
+        message.textContent = '';
+
+    }, 1500);
+
 }
 
-document.getElementById("copy100")
-.addEventListener("click",()=>{
+const formattedInputs = [
+    lootTotal,
+    silver,
+    customMap
+];
 
-    copyValue(fullValue.dataset.raw || 0);
+formattedInputs.forEach(input => {
+
+    input.addEventListener(
+        'input',
+        function(){
+
+            const raw =
+                this.value.replace(/\D/g,'');
+
+            if(!raw){
+
+                this.value = '';
+
+                calculate();
+
+                return;
+
+            }
+
+            this.value =
+                Number(raw)
+                .toLocaleString('en-US');
+
+            calculate();
+
+        }
+    );
 
 });
 
-document.getElementById("copy50")
-.addEventListener("click",()=>{
+document.getElementById('copy100')
+.addEventListener('click', () => {
 
-    copyValue(halfValue.dataset.raw || 0);
+    copyValue(
+        fullValue.dataset.raw || 0
+    );
 
 });
 
-document.getElementById("clearBtn")
-.addEventListener("click",()=>{
+document.getElementById('copy50')
+.addEventListener('click', () => {
 
-    localStorage.removeItem(STORAGE_KEY);
+    copyValue(
+        halfValue.dataset.raw || 0
+    );
 
-    lootTotal.value = "";
-    silver.value = "";
-    customMap.value = "";
+});
 
-    mapType.value = "0";
+document.getElementById('clearBtn')
+.addEventListener('click', () => {
 
-    participants.value = "11";
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+
+    lootTotal.value = '';
+    silver.value = '';
+    customMap.value = '';
+
+    mapType.value = '0';
+
+    participants.value = '11';
 
     updateHalfPlayers();
 
-    halfPlayers.value = "0";
+    halfPlayers.value = '0';
 
     document.querySelector(
         'input[name="tax"][value="15"]'
     ).checked = true;
 
+    toggleCustom();
+
     calculate();
+
 });
 
 [
-    lootTotal,
-    silver,
     mapType,
-    customMap,
     participants,
     halfPlayers
-].forEach(el=>{
+].forEach(element => {
 
-    el.addEventListener("input",calculate);
-    el.addEventListener("change",calculate);
-
-});
-
-document.querySelectorAll('input[name="tax"]')
-.forEach(el=>{
-
-    el.addEventListener("change",calculate);
+    element.addEventListener(
+        'change',
+        calculate
+    );
 
 });
 
-participants.addEventListener("change",()=>{
+document.querySelectorAll(
+    'input[name="tax"]'
+).forEach(element => {
 
-    updateHalfPlayers();
-    calculate();
-
-});
-
-mapType.addEventListener("change",()=>{
-
-    toggleCustom();
-    calculate();
+    element.addEventListener(
+        'change',
+        calculate
+    );
 
 });
+
+participants.addEventListener(
+    'change',
+    () => {
+
+        updateHalfPlayers();
+
+        calculate();
+
+    }
+);
+
+mapType.addEventListener(
+    'change',
+    () => {
+
+        toggleCustom();
+
+        calculate();
+
+    }
+);
 
 updateHalfPlayers();
 loadData();
