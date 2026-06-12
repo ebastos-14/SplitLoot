@@ -15,39 +15,54 @@
 
 body{
     background:#0f1115;
-    color:#fff;
+    color:white;
     padding:20px;
 }
 
 .container{
-    max-width:700px;
+    max-width:1000px;
     margin:auto;
 }
 
 h1{
     text-align:center;
-    margin-bottom:20px;
+    margin-bottom:15px;
+    color:#f0b90b;
+}
+
+.grid-top{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.grid-bottom{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:12px;
+    margin-top:12px;
 }
 
 .card{
     background:#1a1d24;
     border-radius:12px;
-    padding:20px;
-    margin-bottom:15px;
+    padding:15px;
 }
 
 .card h2{
-    margin-bottom:15px;
     color:#f0b90b;
+    margin-bottom:12px;
+    font-size:18px;
 }
 
 .field{
-    margin-bottom:15px;
+    margin-bottom:12px;
 }
 
 label{
     display:block;
     margin-bottom:5px;
+    font-size:14px;
 }
 
 input,
@@ -58,13 +73,13 @@ select{
     border-radius:8px;
     background:#2a2e38;
     color:white;
-    font-size:16px;
+    font-size:15px;
 }
 
 .radio-group{
     display:flex;
-    gap:15px;
-    flex-wrap:wrap;
+    gap:20px;
+    margin-top:5px;
 }
 
 .radio-group label{
@@ -74,81 +89,99 @@ select{
     cursor:pointer;
 }
 
-.result{
-    background:#252a34;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:10px;
+.map-row{
+    display:flex;
+    gap:10px;
 }
 
-.result-title{
+.map-row select{
+    flex:1;
+}
+
+.map-row input{
+    flex:1;
+}
+
+.total-pool{
+    margin-top:15px;
+    background:#252a34;
+    padding:12px;
+    border-radius:8px;
+}
+
+.total-pool-label{
+    font-size:13px;
+    opacity:.8;
+}
+
+.total-pool-value{
+    font-size:24px;
+    font-weight:bold;
+    margin-top:4px;
+}
+
+.result-block{
+    margin-bottom:20px;
+}
+
+.result-label{
     font-size:14px;
     opacity:.8;
 }
 
 .result-value{
-    font-size:32px;
+    font-size:36px;
     font-weight:bold;
     margin-top:5px;
 }
 
-.buttons{
+.actions{
     display:flex;
+    flex-direction:column;
     gap:10px;
-    flex-wrap:wrap;
 }
 
 button{
     border:none;
     border-radius:8px;
-    padding:12px 16px;
+    padding:12px;
     cursor:pointer;
     font-weight:bold;
-    transition:0.2s;
-}
-
-button:hover{
-    opacity:.9;
+    font-size:14px;
 }
 
 .copy-btn{
     background:#f0b90b;
     color:black;
-    flex:1;
 }
 
 .clear-btn{
     background:#c0392b;
     color:white;
-    width:100%;
-    margin-top:15px;
 }
 
-.info{
-    background:#252a34;
-    padding:12px;
-    border-radius:10px;
-    margin-bottom:10px;
-}
-
-.info span{
-    font-weight:bold;
-}
-
-.success{
-    color:#2ecc71;
-    margin-top:10px;
+.message{
+    margin-top:12px;
     text-align:center;
+    color:#2ecc71;
+    min-height:20px;
 }
 
 .error{
-    color:#ff5a5a;
+    color:#ff6b6b;
     margin-top:10px;
-    text-align:center;
 }
 
-.hidden{
-    display:none;
+@media(max-width:768px){
+
+    .grid-top,
+    .grid-bottom{
+        grid-template-columns:1fr;
+    }
+
+    .result-value{
+        font-size:28px;
+    }
 }
 </style>
 </head>
@@ -158,142 +191,174 @@ button:hover{
 
     <h1>💰 Calculadora Split Albion</h1>
 
-    <div class="card">
+    <div class="grid-top">
 
-        <h2>Loot</h2>
+        <!-- INGRESOS -->
+        <div class="card">
 
-        <div class="field">
-            <label>Loot Total</label>
-            <input type="text" id="lootTotal" inputmode="numeric">
+            <h2>Ingresos</h2>
+
+            <div class="field">
+                <label>Loot Total</label>
+                <input type="text" id="lootTotal">
+            </div>
+
+            <div class="field">
+                <label>Plata Líquida</label>
+                <input type="text" id="silver">
+            </div>
+
+            <div class="field">
+                <label>Reventa</label>
+
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="tax" value="10">
+                        10%
+                    </label>
+
+                    <label>
+                        <input type="radio" name="tax" value="15" checked>
+                        15%
+                    </label>
+                </div>
+            </div>
+
+            <div class="total-pool">
+                <div class="total-pool-label">
+                    Total a Repartir
+                </div>
+
+                <div class="total-pool-value" id="totalPool">
+                    0
+                </div>
+            </div>
+
         </div>
 
-        <div class="field">
-            <label>Plata Líquida</label>
-            <input type="text" id="silver" inputmode="numeric">
-        </div>
+        <!-- PARTY -->
+        <div class="card">
 
-        <div class="field">
-            <label>Reventa</label>
+            <h2>Party / Mapa</h2>
 
-            <div class="radio-group">
-                <label>
-                    <input type="radio" name="tax" value="10">
-                    10%
-                </label>
+            <div class="field">
+                <label>Participantes</label>
 
-                <label>
-                    <input type="radio" name="tax" value="15" checked>
-                    15%
-                </label>
+                <select id="participants">
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11" selected>11</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Jugadores al 50%</label>
+
+                <select id="halfPlayers"></select>
+            </div>
+
+            <div class="field">
+                <label>Mapa</label>
+
+                <div class="map-row">
+
+                    <select id="mapType">
+                        <option value="0">No cobrar</option>
+                        <option value="10000000">10M</option>
+                        <option value="18000000">18M</option>
+                        <option value="custom">Custom</option>
+                    </select>
+
+                    <input
+                        type="text"
+                        id="customMap"
+                        placeholder="Custom"
+                    >
+
+                </div>
             </div>
 
         </div>
 
     </div>
 
-    <div class="card">
+    <div class="grid-bottom">
 
-        <h2>Mapa</h2>
+        <!-- RESULTADOS -->
+        <div class="card">
 
-        <div class="field">
+            <h2>Split</h2>
 
-            <select id="mapType">
-                <option value="0">No cobrar mapa</option>
-                <option value="10000000">10M</option>
-                <option value="18000000">18M</option>
-                <option value="custom">Custom</option>
-            </select>
+            <div class="result-block">
 
-        </div>
+                <div class="result-label">
+                    Pago 100%
+                </div>
 
-        <div class="field hidden" id="customMapContainer">
+                <div
+                    class="result-value"
+                    id="fullValue">
+                    0
+                </div>
 
-            <label>Valor Custom</label>
-            <input type="text" id="customMap" inputmode="numeric">
+            </div>
 
-        </div>
+            <div class="result-block">
 
-    </div>
+                <div class="result-label">
+                    Pago 50%
+                </div>
 
-    <div class="card">
+                <div
+                    class="result-value"
+                    id="halfValue">
+                    0
+                </div>
 
-        <h2>Grupo</h2>
+            </div>
 
-        <div class="field">
-
-            <label>Participantes</label>
-
-            <select id="participants">
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11" selected>11</option>
-            </select>
-
-        </div>
-
-        <div class="field">
-
-            <label>Jugadores al 50%</label>
-
-            <select id="halfPlayers"></select>
+            <div
+                class="error"
+                id="errorBox">
+            </div>
 
         </div>
 
-    </div>
+        <!-- ACCIONES -->
+        <div class="card">
 
-    <div class="card">
+            <h2>Acciones</h2>
 
-        <h2>Resumen</h2>
+            <div class="actions">
 
-        <div class="info">
-            Total a repartir:
-            <span id="totalPool">0</span>
+                <button
+                    class="copy-btn"
+                    id="copy100">
+                    📋 Copiar 100%
+                </button>
+
+                <button
+                    class="copy-btn"
+                    id="copy50">
+                    📋 Copiar 50%
+                </button>
+
+                <button
+                    class="clear-btn"
+                    id="clearBtn">
+                    🗑️ Limpiar Todo
+                </button>
+
+            </div>
+
+            <div
+                class="message"
+                id="message">
+            </div>
+
         </div>
-
-        <div class="info">
-            Participaciones:
-            <span id="shares">0</span>
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <h2>Resultados</h2>
-
-        <div id="errorBox" class="error hidden"></div>
-
-        <div class="result">
-            <div class="result-title">Pago 100%</div>
-            <div id="fullValue" class="result-value">0</div>
-        </div>
-
-        <div class="buttons">
-            <button class="copy-btn" id="copy100">
-                📋 Copiar 100%
-            </button>
-        </div>
-
-        <br>
-
-        <div class="result">
-            <div class="result-title">Pago 50%</div>
-            <div id="halfValue" class="result-value">0</div>
-        </div>
-
-        <div class="buttons">
-            <button class="copy-btn" id="copy50">
-                📋 Copiar 50%
-            </button>
-        </div>
-
-        <div id="message" class="success"></div>
-
-        <button class="clear-btn" id="clearBtn">
-            🗑️ Limpiar Todo
-        </button>
 
     </div>
 
@@ -308,147 +373,76 @@ const silver = document.getElementById("silver");
 
 const mapType = document.getElementById("mapType");
 const customMap = document.getElementById("customMap");
-const customMapContainer = document.getElementById("customMapContainer");
 
 const participants = document.getElementById("participants");
 const halfPlayers = document.getElementById("halfPlayers");
 
-const totalPoolElement = document.getElementById("totalPool");
-const sharesElement = document.getElementById("shares");
+const totalPoolElement =
+    document.getElementById("totalPool");
 
-const fullValue = document.getElementById("fullValue");
-const halfValue = document.getElementById("halfValue");
+const fullValue =
+    document.getElementById("fullValue");
 
-const errorBox = document.getElementById("errorBox");
-const message = document.getElementById("message");
+const halfValue =
+    document.getElementById("halfValue");
+
+const errorBox =
+    document.getElementById("errorBox");
+
+const message =
+    document.getElementById("message");
 
 function formatInputValue(value){
 
-    const numbers = String(value).replace(/\D/g,'');
+    const clean =
+        String(value).replace(/\D/g,'');
 
-    if(!numbers) return '';
+    if(!clean) return '';
 
-    return Number(numbers).toLocaleString('en-US');
-
+    return Number(clean)
+        .toLocaleString('en-US');
 }
 
 function getNumericValue(value){
 
     return Number(
-        String(value).replace(/,/g,'')
+        String(value)
+        .replace(/,/g,'')
     ) || 0;
-
 }
 
-function formatResult(value){
+function formatNumber(value){
 
     return Math.round(value)
         .toLocaleString('en-US');
-
-}
-
-function saveData(){
-
-    const data = {
-
-        lootTotal: getNumericValue(lootTotal.value),
-        silver: getNumericValue(silver.value),
-
-        mapType: mapType.value,
-
-        customMap: getNumericValue(customMap.value),
-
-        participants: participants.value,
-        halfPlayers: halfPlayers.value,
-
-        tax: document.querySelector(
-            'input[name="tax"]:checked'
-        ).value
-
-    };
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
-
-}
-
-function loadData(){
-
-    const data = JSON.parse(
-        localStorage.getItem(STORAGE_KEY)
-    );
-
-    if(!data) return;
-
-    lootTotal.value = data.lootTotal
-        ? formatInputValue(data.lootTotal)
-        : '';
-
-    silver.value = data.silver
-        ? formatInputValue(data.silver)
-        : '';
-
-    customMap.value = data.customMap
-        ? formatInputValue(data.customMap)
-        : '';
-
-    mapType.value = data.mapType || '0';
-
-    participants.value = data.participants || '11';
-
-    updateHalfPlayers();
-
-    halfPlayers.value = data.halfPlayers || '0';
-
-    const taxRadio = document.querySelector(
-        `input[name="tax"][value="${data.tax || '15'}"]`
-    );
-
-    if(taxRadio){
-        taxRadio.checked = true;
-    }
-
-    toggleCustom();
-
 }
 
 function updateHalfPlayers(){
 
-    const total = Number(
-        participants.value
-    );
+    const total =
+        Number(participants.value);
 
-    const current = halfPlayers.value;
+    const current =
+        halfPlayers.value;
 
     halfPlayers.innerHTML = '';
 
-    for(let i = 0; i <= total - 1; i++){
+    for(let i=0;i<=total-1;i++){
 
         const option =
-            document.createElement('option');
+            document.createElement("option");
 
         option.value = i;
         option.textContent = i;
 
         halfPlayers.appendChild(option);
-
     }
 
-    if(current <= total - 1){
+    if(current <= total-1){
+
         halfPlayers.value = current;
+
     }
-
-}
-
-function toggleCustom(){
-
-    customMapContainer.classList.toggle(
-        'hidden',
-        mapType.value !== 'custom'
-    );
-
 }
 
 function calculate(){
@@ -463,23 +457,23 @@ function calculate(){
             silver.value
         );
 
-    const tax = Number(
-        document.querySelector(
-            'input[name="tax"]:checked'
-        ).value
-    );
+    const tax =
+        Number(
+            document.querySelector(
+                'input[name="tax"]:checked'
+            ).value
+        );
 
     let mapCost = 0;
 
-    if(mapType.value === 'custom'){
+    if(mapType.value === "custom"){
 
         mapCost =
             getNumericValue(
                 customMap.value
             );
 
-    }
-    else{
+    }else{
 
         mapCost =
             Number(mapType.value);
@@ -502,21 +496,17 @@ function calculate(){
 
     if(totalPool < 0){
 
-        errorBox.classList.remove('hidden');
-
         errorBox.textContent =
-            'El total a repartir es negativo.';
+            "El total es negativo.";
 
-        fullValue.textContent = '0';
-        halfValue.textContent = '0';
-
-        totalPoolElement.textContent = '0';
+        fullValue.textContent = "0";
+        halfValue.textContent = "0";
+        totalPoolElement.textContent = "0";
 
         return;
-
     }
 
-    errorBox.classList.add('hidden');
+    errorBox.textContent = "";
 
     const shares =
         (totalPlayers - halfCount) +
@@ -529,16 +519,13 @@ function calculate(){
         pay100 / 2;
 
     totalPoolElement.textContent =
-        formatResult(totalPool);
-
-    sharesElement.textContent =
-        shares;
+        formatNumber(totalPool);
 
     fullValue.textContent =
-        formatResult(pay100);
+        formatNumber(pay100);
 
     halfValue.textContent =
-        formatResult(pay50);
+        formatNumber(pay50);
 
     fullValue.dataset.raw =
         Math.round(pay100);
@@ -547,7 +534,94 @@ function calculate(){
         Math.round(pay50);
 
     saveData();
+}
 
+function saveData(){
+
+    const data = {
+
+        lootTotal:
+            getNumericValue(
+                lootTotal.value
+            ),
+
+        silver:
+            getNumericValue(
+                silver.value
+            ),
+
+        mapType:
+            mapType.value,
+
+        customMap:
+            getNumericValue(
+                customMap.value
+            ),
+
+        participants:
+            participants.value,
+
+        halfPlayers:
+            halfPlayers.value,
+
+        tax:
+            document.querySelector(
+                'input[name="tax"]:checked'
+            ).value
+    };
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+    );
+}
+
+function loadData(){
+
+    const data = JSON.parse(
+        localStorage.getItem(
+            STORAGE_KEY
+        )
+    );
+
+    if(!data) return;
+
+    lootTotal.value =
+        data.lootTotal
+        ? formatInputValue(data.lootTotal)
+        : "";
+
+    silver.value =
+        data.silver
+        ? formatInputValue(data.silver)
+        : "";
+
+    customMap.value =
+        data.customMap
+        ? formatInputValue(data.customMap)
+        : "";
+
+    mapType.value =
+        data.mapType || "0";
+
+    participants.value =
+        data.participants || "11";
+
+    updateHalfPlayers();
+
+    halfPlayers.value =
+        data.halfPlayers || "0";
+
+    const radio =
+        document.querySelector(
+            `input[name="tax"][value="${data.tax || 15}"]`
+        );
+
+    if(radio){
+
+        radio.checked = true;
+
+    }
 }
 
 function copyValue(value){
@@ -559,39 +633,33 @@ function copyValue(value){
     );
 
     message.textContent =
-        '✅ Copiado al portapapeles';
+        "✅ Copiado";
 
-    setTimeout(() => {
+    setTimeout(()=>{
 
-        message.textContent = '';
+        message.textContent = "";
 
-    }, 1500);
-
+    },1500);
 }
 
-const formattedInputs = [
-    lootTotal,
-    silver,
-    customMap
-];
-
-formattedInputs.forEach(input => {
+[lootTotal,silver,customMap]
+.forEach(input=>{
 
     input.addEventListener(
-        'input',
+        "input",
         function(){
 
             const raw =
-                this.value.replace(/\D/g,'');
+                this.value
+                .replace(/\D/g,'');
 
             if(!raw){
 
-                this.value = '';
+                this.value = "";
 
                 calculate();
 
                 return;
-
             }
 
             this.value =
@@ -599,14 +667,14 @@ formattedInputs.forEach(input => {
                 .toLocaleString('en-US');
 
             calculate();
-
         }
     );
 
 });
 
-document.getElementById('copy100')
-.addEventListener('click', () => {
+document
+.getElementById("copy100")
+.addEventListener("click",()=>{
 
     copyValue(
         fullValue.dataset.raw || 0
@@ -614,8 +682,9 @@ document.getElementById('copy100')
 
 });
 
-document.getElementById('copy50')
-.addEventListener('click', () => {
+document
+.getElementById("copy50")
+.addEventListener("click",()=>{
 
     copyValue(
         halfValue.dataset.raw || 0
@@ -623,80 +692,67 @@ document.getElementById('copy50')
 
 });
 
-document.getElementById('clearBtn')
-.addEventListener('click', () => {
+document
+.getElementById("clearBtn")
+.addEventListener("click",()=>{
 
     localStorage.removeItem(
         STORAGE_KEY
     );
 
-    lootTotal.value = '';
-    silver.value = '';
-    customMap.value = '';
+    lootTotal.value = "";
+    silver.value = "";
+    customMap.value = "";
 
-    mapType.value = '0';
+    mapType.value = "0";
 
-    participants.value = '11';
+    participants.value = "11";
 
     updateHalfPlayers();
 
-    halfPlayers.value = '0';
+    halfPlayers.value = "0";
 
     document.querySelector(
         'input[name="tax"][value="15"]'
     ).checked = true;
 
-    toggleCustom();
-
     calculate();
-
-});
-
-[
-    mapType,
-    participants,
-    halfPlayers
-].forEach(element => {
-
-    element.addEventListener(
-        'change',
-        calculate
-    );
-
-});
-
-document.querySelectorAll(
-    'input[name="tax"]'
-).forEach(element => {
-
-    element.addEventListener(
-        'change',
-        calculate
-    );
-
 });
 
 participants.addEventListener(
-    'change',
-    () => {
+    "change",
+    ()=>{
 
         updateHalfPlayers();
 
         calculate();
-
     }
 );
 
-mapType.addEventListener(
-    'change',
-    () => {
+[
+    mapType,
+    halfPlayers
+].forEach(element=>{
 
-        toggleCustom();
+    element.addEventListener(
+        "change",
+        calculate
+    );
 
-        calculate();
+});
 
-    }
-);
+document
+.querySelectorAll(
+    'input[name="tax"]'
+)
+.forEach(element=>{
+
+    element.addEventListener(
+        "change",
+        calculate
+    );
+
+});
 
 updateHalfPlayers();
 loadData();
