@@ -265,18 +265,19 @@ button{
                 <div class="map-row">
 
                     <select id="mapType">
-                        <option value="0">Gratis</option>
+                        <option value="0">No cobrar</option>
                         <option value="10000000">10M</option>
                         <option value="18000000">18M</option>
-                        <option value="custom">Otro</option>
+                        <option value="custom">Custom</option>
                     </select>
-
+                
                     <input
                         type="text"
                         id="customMap"
-                        placeholder="Soy Un Cacahuate"
+                        placeholder="$0,0"
+                        style="display:none;"
                     >
-
+                
                 </div>
             </div>
 
@@ -623,6 +624,7 @@ function loadData(){
 
     mapType.value =
         data.mapType || "0";
+    toggleCustomMap();
 
     participants.value =
         data.participants || "11";
@@ -660,6 +662,21 @@ function copyValue(value){
         message.textContent = "";
 
     },1500);
+}
+
+function toggleCustomMap(){
+
+    if(mapType.value === "custom"){
+
+        customMap.style.display = "block";
+
+    }else{
+
+        customMap.style.display = "none";
+        customMap.value = "";
+
+    }
+
 }
 
 [lootTotal,silver,customMap]
@@ -739,6 +756,8 @@ document
         'input[name="tax"][value="15"]'
     ).checked = true;
 
+    toggleCustomMap();
+
     calculate();
 });
 
@@ -752,17 +771,20 @@ participants.addEventListener(
     }
 );
 
-[
-    mapType,
-    halfPlayers
-].forEach(element=>{
+halfPlayers.addEventListener(
+    "change",
+    calculate
+);
 
-    element.addEventListener(
-        "change",
-        calculate
-    );
+mapType.addEventListener(
+    "change",
+    ()=>{
 
-});
+        toggleCustomMap();
+        calculate();
+
+    }
+);
 
 document
 .querySelectorAll(
@@ -779,6 +801,9 @@ document
 
 updateHalfPlayers();
 loadData();
+
+toggleCustomMap();
+    
 calculate();
 
 </script>
