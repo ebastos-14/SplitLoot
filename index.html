@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora Split Albion</title>
+<title>Split Avas EB14</title>
 
 <style>
 *{
@@ -189,27 +189,27 @@ button{
 
 <div class="container">
 
-    <h1>💰 Calculadora Split Albion</h1>
+    <h1>Split Ava EB14</h1>
 
     <div class="grid-top">
 
         <!-- INGRESOS -->
         <div class="card">
 
-            <h2>Ingresos</h2>
+            <h2>Total</h2>
 
             <div class="field">
-                <label>Loot Total</label>
+                <label>Loot</label>
                 <input type="text" id="lootTotal">
             </div>
 
             <div class="field">
-                <label>Plata Líquida</label>
+                <label>Silver</label>
                 <input type="text" id="silver">
             </div>
 
             <div class="field">
-                <label>Reventa</label>
+                <label>Descuento</label>
 
                 <div class="radio-group">
                     <label>
@@ -226,7 +226,7 @@ button{
 
             <div class="total-pool">
                 <div class="total-pool-label">
-                    Total a Repartir
+                    Total Final
                 </div>
 
                 <div class="total-pool-value" id="totalPool">
@@ -239,7 +239,7 @@ button{
         <!-- PARTY -->
         <div class="card">
 
-            <h2>Party / Mapa</h2>
+            <h2>Party y Mapa</h2>
 
             <div class="field">
                 <label>Participantes</label>
@@ -254,27 +254,27 @@ button{
             </div>
 
             <div class="field">
-                <label>Jugadores al 50%</label>
+                <label>Sancionados</label>
 
                 <select id="halfPlayers"></select>
             </div>
 
             <div class="field">
-                <label>Mapa</label>
+                <label>Precio Mapa</label>
 
                 <div class="map-row">
 
                     <select id="mapType">
-                        <option value="0">No cobrar</option>
+                        <option value="0">Gratis</option>
                         <option value="10000000">10M</option>
                         <option value="18000000">18M</option>
-                        <option value="custom">Custom</option>
+                        <option value="custom">Otro</option>
                     </select>
 
                     <input
                         type="text"
                         id="customMap"
-                        placeholder="Custom"
+                        placeholder="Soy Un Cacahuate"
                     >
 
                 </div>
@@ -294,7 +294,7 @@ button{
             <div class="result-block">
 
                 <div class="result-label">
-                    Pago 100%
+                    Split Normal
                 </div>
 
                 <div
@@ -310,7 +310,7 @@ button{
                 id="halfResultBlock">
             
                 <div class="result-label">
-                    Pago 50%
+                    Split Sancionado
                 </div>
             
                 <div
@@ -331,26 +331,26 @@ button{
         <!-- ACCIONES -->
         <div class="card">
 
-            <h2>Acciones</h2>
+            <h2>Coso Doble</h2>
 
             <div class="actions">
 
                 <button
                     class="copy-btn"
                     id="copy100">
-                    📋 Copiar 100%
+                    📈 Copiar
                 </button>
 
                 <button
                     class="copy-btn"
                     id="copy50">
-                    📋 Copiar 50%
+                    📉 Copiar
                 </button>
 
                 <button
                     class="clear-btn"
                     id="clearBtn">
-                    🗑️ Limpiar Todo
+                    🗑️ Clins De Cal
                 </button>
 
             </div>
