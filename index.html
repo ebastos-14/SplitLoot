@@ -305,18 +305,20 @@ button{
 
             </div>
 
-            <div class="result-block">
-
+            <div
+                class="result-block"
+                id="halfResultBlock">
+            
                 <div class="result-label">
                     Pago 50%
                 </div>
-
+            
                 <div
                     class="result-value"
                     id="halfValue">
                     0
                 </div>
-
+            
             </div>
 
             <div
@@ -386,11 +388,17 @@ const fullValue =
 const halfValue =
     document.getElementById("halfValue");
 
+const halfResultBlock =
+    document.getElementById("halfResultBlock");
+
 const errorBox =
     document.getElementById("errorBox");
 
 const message =
     document.getElementById("message");
+
+const copy50Button =
+    document.getElementById("copy50");
 
 function formatInputValue(value){
 
@@ -485,6 +493,18 @@ function calculate(){
 
     const halfCount =
         Number(halfPlayers.value);
+
+    if(halfCount === 0){
+    
+        halfResultBlock.style.display = "none";
+        copy50Button.style.display = "none";
+    
+    }else{
+    
+        halfResultBlock.style.display = "block";
+        copy50Button.style.display = "block";
+    
+    }
 
     const lootNet =
         loot * ((100 - tax) / 100);
@@ -711,6 +731,9 @@ document
     updateHalfPlayers();
 
     halfPlayers.value = "0";
+    
+    halfResultBlock.style.display = "none";
+    copy50Button.style.display = "none";
 
     document.querySelector(
         'input[name="tax"][value="15"]'
